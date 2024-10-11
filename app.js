@@ -1,9 +1,18 @@
 const express = require('express')
 const fs = require('fs');
 const path = require('path');
+const { Pool } = require('pg');
 
 const app = express()
 const port = process.env.PORT || 80
+
+const pool = new Pool({
+  user: 'postgres',
+  password: 'KvbKnO42KCnRjbiERsAk', // we ball
+  host: 'localhost',
+  port: 5432,
+  database: 'postgres'
+})
 
 app.use(express.static('public'))
 
@@ -17,6 +26,16 @@ app.get("/home", (req, res) => {
 app.get("/game", (req, res) => {
 	res.sendFile(__dirname + "/public/panorama/index.html");
 })
+
+app.get("/users", async (req, res) => {
+	try {
+		const result = await pool.query('SELECT * FROM users');
+		res.json(result.rows);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Internal Server Error');
+	}
+});
 
 // Route to fetch the list of images from the imgs folder
 app.get('/images', (req, res) => {
