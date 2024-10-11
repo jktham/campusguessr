@@ -10,6 +10,9 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
 	res.sendFile(__dirname + "/public/home.html");
 })
+app.get("/home", (req, res) => {
+	res.sendFile(__dirname + "/public/game.html");
+})
 
 app.listen(port, () => {
 	console.log(`app listening on port ${port}`)

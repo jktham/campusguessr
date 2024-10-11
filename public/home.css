@@ -1,0 +1,15 @@
+* {
+    margin: 0;
+}
+body {
+    display: grid;
+    align-content: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: 100vh;
+    width: calc(100vw - 16px);
+}
+
+#start:hover {
+    background-color: rgb(255 0 0 / 100%);
+}
