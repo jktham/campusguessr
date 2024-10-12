@@ -21,8 +21,8 @@ export default function Page() {
 async function submitGuess() {
 	let guess = {
 		image_id: 4,
-		building: "hg",
-		floor: "f",
+		building: "HG",
+		floor: "F",
 		x: 100,
 		y: 200
 	}
