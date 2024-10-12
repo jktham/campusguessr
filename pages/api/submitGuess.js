@@ -14,9 +14,7 @@ export default async function handler(req, res) {
 		y: req.body.y || 0
 	}
 
-	// compare guess to location
-	// calculate points
-	// add points to user
+	// add points to user (need user_id)
 
 	// get true location:
 	let location = {
@@ -71,7 +69,7 @@ export default async function handler(req, res) {
 }
 
 function calcPoints(guess, actual, guessID, trueID) {
-	
+
 	deduct = 0;
 
 	// 0 points if wrong building
