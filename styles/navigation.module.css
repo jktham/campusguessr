@@ -1,0 +1,35 @@
+.logo {
+	color: var(--fg1);
+	font-family: "JetBrains Mono";
+	font-size: 0.8rem;
+	font-style: normal;
+	font-weight: 800;
+	line-height: normal;
+}
+
+.title {
+	grid-area: title;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.header {
+	height: 4.5rem;
+	padding-bottom: 1.5rem;
+	grid-area: header;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.footer {
+	grid-area: footer;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	gap: 3rem;
+	align-items: center;
+}
