@@ -13,6 +13,7 @@ export default function Page() {
 			<h1>got {data.length} users</h1>
 			<button onClick={submitGuess}>Submit guess</button>
 			<button onClick={createUser}>Create user</button>
+			<button onClick={startRound}>Start round</button>
 		</div>
 	)
 	
@@ -21,8 +22,8 @@ export default function Page() {
 async function submitGuess() {
 	let guess = {
 		image_id: 4,
-		building: "hg",
-		floor: "f",
+		building: "HG",
+		floor: "F",
 		x: 100,
 		y: 200
 	}
@@ -44,7 +45,7 @@ async function createUser() {
 		password: prompt("enter password")
 	}
 
-	if (user.name == "" || user.password == "") {
+	if (!user.name || !user.password) {
 		console.log("empty name or password")
 		return;
 	}
@@ -54,5 +55,15 @@ async function createUser() {
 		headers: {'Content-Type': 'application/json'},
 		body: JSON.stringify(user)
 	});
+	console.log(res);
+}
+
+async function startRound() {
+	let res = await fetch(window.location.origin + "/api/startRound", {
+		method: "GET"
+	});
+	console.log(res);
+
+	res = await res.json().catch((e) => console.error(e));
 	console.log(res);
 }
