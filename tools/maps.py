@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 
 # Define the CSV file path and the PostgreSQL connection URL
 csv_file_path = 'image.csv'  # Path to your CSV file
-database_url = 'postgresql+psycopg2://postgres:KvbKnO42KCnRjbiERsAk@localhost:5432/postgres'
+database_url = 'postgresql://postgres:KvbKnO42KCnRjbiERsAk@localhost:5432/postgres'
 
 # Read the CSV file into a pandas DataFrame
 df = pd.read_csv(csv_file_path)
