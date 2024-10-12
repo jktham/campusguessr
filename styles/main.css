@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Anek+Latin:wdth,wght@75..125,100..800&display=swap');
+
+.wrapper {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: 3rem auto 3rem;
+	grid-template-rows: 3rem min-content auto minmax(3rem, min-content);
+	grid-template-areas: ". title ."
+						 ". header ."
+						 ". main ."
+						 ". footer .";
+	grid-column-gap: 0;
+	grid-row-gap: 0;
+	transition-duration: .3s;
+	transition-property: grid;
+}
+
+main {
+	grid-area: main;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+main::-webkit-scrollbar {
+	display: none;
+}
+
+h1 {
+	color: var(--fg1);
+	font-family: "JetBrains Mono";
+	font-size: 1.6rem;
+	font-style: normal;
+	font-weight: 800;
+	line-height: normal;
+}
+
+p {
+	color: var(--fg1);
+	font-family: "JetBrains Mono";
+	font-size: 0.8rem;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
+}
+
+.controls {
+	color: var(--fg1);
+	font-family: "JetBrains Mono";
+	font-size: 0.65rem;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.border {
+	border-radius: 0.5rem;
+	border: 1px solid var(--fg2);
+	overflow: clip;
+}
+
+@media screen and (max-width: 50rem) {
+	.wrapper {
+		grid-template-columns: 1.5rem auto 1.5rem;
+	}
+}

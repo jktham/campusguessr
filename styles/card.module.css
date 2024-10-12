@@ -1,0 +1,30 @@
+.card {
+	cursor: pointer;
+	transition-duration: .3s;
+	transition-property: background-color, color;
+	color: var(--fg1);
+}
+
+.card:hover {
+	background-color: var(--bg3);
+	border-color: var(--bg3);
+	color: var(--fg3);
+}
+
+.header {
+	padding: 1.5rem;
+	/*padding: 1.5rem 1.5rem 0;*/
+	color: inherit;
+	text-align: center;
+	font-family: "JetBrains Mono";
+	font-size: 6.4rem;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 6rem;
+	letter-spacing: -0.4rem;
+}
+
+.card span {
+	padding: 0 1.5rem;
+	color: inherit;
+}

@@ -1,0 +1,95 @@
+* {
+	box-sizing: border-box;
+	color: inherit;
+	margin: 0;
+	padding: 0;
+	outline: none;
+	border: none;
+	scroll-behavior: smooth;
+}
+
+:root {
+	--Dbg1: #0;
+	--Dbg2: #0;
+	--Dbg3: #0;
+	--Dfg1: #0;
+	--Dfg2: #0;
+	--Dfg3: #0;
+
+	--Lbg1: #FDF9F5;
+	--Lbg2: #7D8188;
+	--Lbg3: #232529;
+	--Lfg1: #131312;
+	--Lfg2: #7D8188;
+	--Lfg3: #FFFFFF;
+
+	/*--s1: 0.25rem;
+	--s2: 0.5rem;
+	--s3: 0.75rem;
+	--s4: 1.5rem;
+	--s5: 3rem;
+	--s6: 6rem;
+
+	--m1: var(--s1);
+	--m2: var(--s2);
+	--m3: var(--s3);
+	--m4: var(--s4);
+	--m5: var(--s5);
+	--m6: var(--s6);*/
+}
+
+
+[data-theme="dark"] {
+	--bg1: var(--Dbg1);
+	--bg2: var(--Dbg2);
+	--bg3: var(--Dbg3);
+	--fg1: var(--Dfg1);
+	--fg2: var(--Dfg2);
+	--fg3: var(--Dfg3);
+}
+
+:root,
+[data-theme="light"] {
+	--bg1: var(--Lbg1);
+	--bg2: var(--Lbg2);
+	--bg3: var(--Lbg3);
+	--fg1: var(--Lfg1);
+	--fg2: var(--Lfg2);
+	--fg3: var(--Lfg3);
+}
+
+html,
+body,
+#__next {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	user-select: none;
+}
+
+html {
+	font-size: 1.25rem;
+	background-color: var(--bg1);
+	color: var(--fg1);
+	scroll-behavior: smooth;
+
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button {
+	background-color: transparent;
+	cursor: pointer;
+}
+
+img {
+	user-drag: none;
+	-webkit-user-drag: none;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
