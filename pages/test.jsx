@@ -36,7 +36,7 @@ async function submitGuess() {
 	let guess = {
 		image_id: 1,
 		building: "HG",
-		floor: "H",
+		floor: 12,
 		x: 200,
 		y: 200
 	}
