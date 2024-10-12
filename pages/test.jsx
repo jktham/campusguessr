@@ -45,7 +45,7 @@ async function submitGuess() {
 	let guess = {
 		image_id: 1,
 		building: "HG",
-		floor: 12,
+		floor: 6,
 		x: 200,
 		y: 200,
 		username: localStorage.getItem("username")
