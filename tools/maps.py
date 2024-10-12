@@ -10,7 +10,7 @@ df = pd.read_csv(csv_file_path)
 
 #Create a database engine using SQLAlchemy
 engine = create_engine(database_url)
-
+ 
 # Write the DataFrame to the PostgreSQL table
 df.to_sql(image, engine, if_exists='replace', index=False)
 
