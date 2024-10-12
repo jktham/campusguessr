@@ -1,5 +1,8 @@
 import { pool } from "./utils/db.js"
 
+let MAX_POINTS = 10000;
+let MISS_PENATLY = 1000;
+
 export default async function handler(req, res) {
 
 	// guess that is received
@@ -11,7 +14,6 @@ export default async function handler(req, res) {
 		y: req.body.y || 0
 	}
 
-	// do db stuff
 	// compare guess to location
 	// calculate points
 	// add points to user
@@ -60,16 +62,30 @@ export default async function handler(req, res) {
 	let answer = {
 		your_guess: guess,
 		actual_location: location,
-		points: 9999
+		points: MAX_POINTS
 	}
 
-	answer.points -= calcPoints(answer.your_guess, answer.actual_location);
+	answer.points -= calcPoints(answer.your_guess, answer.actual_location, guessID, trueID);
 
 	res.status(200).send(JSON.stringify(answer));
 }
 
-function calcPoints(guess, actual) {
+function calcPoints(guess, actual, guessID, trueID) {
+	
+	deduct = 0;
+
+	// 0 points if wrong building
+	if (guess.building != actual.building) return MAX_POINTS;
+
+	// squared mean error
 	deduct = Math.sqrt(Math.pow(guess.x - actual.x, 2) + Math.pow(guess.y - actual.y, 2));
+
+	// Floor penalty
+	deduct += Math.abs(guessID - trueID) * MISS_PENATLY;
+
+	// Cant exceed MAX_POINTS
+	if (deduct > MAX_POINTS) deduct = MAX_POINTS;
+
 	return deduct;
 }
 
