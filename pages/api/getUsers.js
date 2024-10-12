@@ -1,14 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-const { Pool } = require('pg');
-
-const pool = new Pool({
-	user: 'postgres',
-	password: 'KvbKnO42KCnRjbiERsAk', // we ball
-	host: 'localhost',
-	port: 5432,
-	database: 'postgres'
-})
+import { pool } from "./utils/db.js"
 
 export default async function handler(req, res) {
 	try {
