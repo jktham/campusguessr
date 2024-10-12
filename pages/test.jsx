@@ -34,10 +34,10 @@ async function getUsers() {
 
 async function submitGuess() {
 	let guess = {
-		image_id: 4,
+		image_id: 1,
 		building: "HG",
-		floor: "F",
-		x: 100,
+		floor: "H",
+		x: 200,
 		y: 200
 	}
 

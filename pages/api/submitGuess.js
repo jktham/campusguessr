@@ -1,7 +1,8 @@
 import { pool } from "../../utils/db.js"
 
-let MAX_POINTS = 10000;
-let MISS_PENATLY = 1000;
+let MAX_POINTS = 1000.0;
+let MISS_PENATLY = 100.0;
+let SCALE_FACTOR = 1;
 
 export default async function handler(req, res) {
 
@@ -17,16 +18,9 @@ export default async function handler(req, res) {
 	// add points to user (need user_id)
 
 	// get true location:
-	let location = {
-		image_id: 0,
-		x: 0,
-		y: 0,
-		building: "",
-		floor: ""
-	}
+	let location;
 
 	let guessID = 0;
-	let trueID = 0;
 
 	// Get correct values and floor index of guess
 	try {
@@ -42,19 +36,10 @@ export default async function handler(req, res) {
 			return;
 		}
 		
-		location.image_id = result.rows[0];
-
-		const floorID_true = await pool.query(
-			`SELECT value FROM floor_index WHERE building = '${location.building}' AND floor = '${location.floor}'`
-		);
-
-		if (floorID_true.rowCount == 0) {
-			console.error("MISSING DB ENTRY");
-			return;
-		}
+		location = result.rows[0];
+		// console.log(location);
 
 		guessID = floorID_guess.rows[0].value;
-		trueID = floorID_true.rows[0].value;
 
 	} catch (err) {
 		console.error(err);
@@ -68,23 +53,27 @@ export default async function handler(req, res) {
 		points: MAX_POINTS
 	}
 
-	answer.points -= calcPoints(guess, location, guessID, trueID);
+	answer.points -= calcPoints(guess, location, guessID);
 
 	res.status(200).json(answer);
+	console.log("You got " + answer.points + "!");
 }
 
-function calcPoints(guess, actual, guessID, trueID) {
+function calcPoints(guess, actual, guessID) {
 
-	let deduct = 0;
+	let deduct = 0.0;
 
 	// 0 points if wrong building
 	if (guess.building != actual.building) return MAX_POINTS;
 
 	// squared mean error
-	deduct = Math.sqrt(Math.pow(guess.x - actual.x, 2) + Math.pow(guess.y - actual.y, 2));
+	deduct = Math.log2(Math.sqrt(
+		(guess.x - actual.x_coord) * (guess.x - actual.x_coord) + 
+		(guess.y - actual.y_coord) * (guess.y - actual.y_coord)));
+	deduct *= SCALE_FACTOR;
 
 	// Floor penalty
-	deduct += Math.abs(guessID - trueID) * MISS_PENATLY;
+	deduct += Math.abs(guessID - actual.value) * MISS_PENATLY;
 
 	// Cant exceed MAX_POINTS
 	if (deduct > MAX_POINTS) deduct = MAX_POINTS;
