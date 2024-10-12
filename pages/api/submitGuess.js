@@ -25,25 +25,30 @@ export default async function handler(req, res) {
 		floor: ""
 	}
 
-	guessID = 0;
-	trueID = 0;
+	let guessID = 0;
+	let trueID = 0;
 
 	// Get correct values and floor index of guess
 	try {
 		const result = await pool.query(
-			`SELECT * FROM image_map where image_id = ${guess.image_id}`);
+			`SELECT * FROM image_map where image_id = '${guess.image_id}'`);
 
 		const floorID_guess = await pool.query(
-			`SELECT value FROM floor_index WHERE building = ${guess.building} AND floor = ${guess.floor}`
+			`SELECT value FROM floor_index WHERE building = '${guess.building}' AND floor = '${guess.floor}'`
 		);
+
+		if (result.rowCount != 1 || floorID_guess.rowCount == 0) {
+			console.error("MISSING DB ENTRY");
+			return;
+		}
 		
-		location = result.rows[0];
+		location.image_id = result.rows[0];
 
 		const floorID_true = await pool.query(
-			`SELECT value FROM floor_index WHERE building = ${location.building} AND floor = ${location.floor}`
+			`SELECT value FROM floor_index WHERE building = '${location.building}' AND floor = '${location.floor}'`
 		);
 
-		if (result.rowCount != 1 || floorID_guess.rowCount == 0 || floorID_true.rowCount == 0) {
+		if (floorID_true.rowCount == 0) {
 			console.error("MISSING DB ENTRY");
 			return;
 		}
@@ -63,14 +68,14 @@ export default async function handler(req, res) {
 		points: MAX_POINTS
 	}
 
-	answer.points -= calcPoints(answer.your_guess, answer.actual_location, guessID, trueID);
+	answer.points -= calcPoints(guess, location, guessID, trueID);
 
 	res.status(200).json(answer);
 }
 
 function calcPoints(guess, actual, guessID, trueID) {
 
-	deduct = 0;
+	let deduct = 0;
 
 	// 0 points if wrong building
 	if (guess.building != actual.building) return MAX_POINTS;
