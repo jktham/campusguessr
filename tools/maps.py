@@ -12,5 +12,5 @@ df = pd.read_csv(csv_file_path)
 engine = create_engine(database_url)
  
 # Write the DataFrame to the PostgreSQL table
-df.to_sql(image, engine, if_exists='replace', index=False)
+df.to_sql('image', engine, if_exists='replace', index=False)
 
