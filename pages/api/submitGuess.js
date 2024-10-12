@@ -1,4 +1,4 @@
-import { pool } from "./utils/db.js"
+import { pool } from "../../utils/db.js"
 
 export default async function handler(req, res) {
 	let guess = {
@@ -28,5 +28,5 @@ export default async function handler(req, res) {
 		points: 9999
 	}
 
-	res.status(200).send(JSON.stringify(answer));
+	res.status(200).json(answer);
 }
