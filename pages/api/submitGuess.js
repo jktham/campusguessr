@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 	let guess = {
 		image_id: req.body.image_id || 0,
 		building: req.body.building || "",
-		floor: req.body.floor || "",
+		floor: req.body.floor || 0,
 		x: req.body.x || 0,
 		y: req.body.y || 0,
 		username: req.body.username
@@ -28,19 +28,13 @@ export default async function handler(req, res) {
 		const result = await pool.query(
 			`SELECT * FROM image_map where image_id = '${guess.image_id}'`);
 
-		const floorID_guess = await pool.query(
-			`SELECT value FROM floor_index WHERE building = '${guess.building}' AND floor = '${guess.floor}'`
-		);
-
-		if (result.rowCount != 1 || floorID_guess.rowCount == 0) {
+		if (result.rowCount != 1) {
 			console.error("MISSING DB ENTRY");
 			return;
 		}
 		
 		location = result.rows[0];
 		// console.log(location);
-
-		guessID = floorID_guess.rows[0].value;
 
 	} catch (err) {
 		console.error(err);
@@ -54,7 +48,7 @@ export default async function handler(req, res) {
 		points: MAX_POINTS
 	}
 
-	answer.points -= calcPoints(guess, location, guessID);
+	answer.points -= calcPoints(guess, location);
 
 	// todo: add points to username
 
@@ -62,7 +56,7 @@ export default async function handler(req, res) {
 	console.log("You got " + answer.points + "!");
 }
 
-function calcPoints(guess, actual, guessID) {
+function calcPoints(guess, actual) {
 
 	let deduct = 0.0;
 
@@ -76,7 +70,7 @@ function calcPoints(guess, actual, guessID) {
 	deduct *= SCALE_FACTOR;
 
 	// Floor penalty
-	deduct += Math.abs(guessID - actual.value) * MISS_PENATLY;
+	deduct += Math.abs(guess.floor - actual.value) * MISS_PENATLY;
 
 	// Cant exceed MAX_POINTS
 	if (deduct > MAX_POINTS) deduct = MAX_POINTS;

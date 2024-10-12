@@ -1,7 +1,7 @@
 import SEO from '../components/SEO'
 import Navigation from '../components/navigation'
 import Card from '../components/card'
-import {ItemContainer} from '../components/itemContainer'
+import {ItemContainer} from '../components/container'
 
 export default function Home() {
 

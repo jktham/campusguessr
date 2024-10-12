@@ -1,0 +1,41 @@
+.element {
+	display: inline-flex;
+	height: 2.25rem;
+	padding: 0.75rem 1.5rem;
+
+	color: var(--fg1);
+
+	transition: .3s;
+	transition-property: color, background-color;
+}
+
+.element.primary {
+	background-color: var(--bg3);
+	color: var(--fg3);
+}
+.element.primary:hover {
+	background-color: var(--bg2);
+	color: var(--fg3);
+}
+
+.element.secondary {
+	border: 1px solid var(--fg2);
+	color: var(--fg3);
+}
+.element.secondary:hover {
+	background-color: var(--bg2);
+	border-color: var(--bg2);
+	color: var(--bg2);
+}
+
+.element input {
+	width: 100%;
+	background-color: transparent;
+	height: 2.25rem;
+	margin: -0.75rem 0;
+	color: var(--fg1);
+}
+
+.element input::placeholder {
+	color: var(--fg2);
+}
