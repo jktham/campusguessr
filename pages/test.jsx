@@ -101,6 +101,8 @@ async function startRound() {
 
 	res = await res.json().catch((e) => console.error(e));
 	console.log(res);
+
+	console.log(window.location.origin + res.image_filepath.split("./public")[1])
 }
 
 async function getBuildings() {
