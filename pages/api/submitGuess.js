@@ -16,12 +16,8 @@ export default async function handler(req, res) {
 		username: req.body.username
 	}
 
-	// add points to user (need user_id)
-
 	// get true location:
 	let location;
-
-	let guessID = 0;
 
 	// Get correct values and floor index of guess
 	try {
@@ -30,6 +26,7 @@ export default async function handler(req, res) {
 
 		if (result.rowCount != 1) {
 			console.error("MISSING DB ENTRY");
+			res.status(500).send('Internal Server Error');
 			return;
 		}
 		
@@ -40,23 +37,44 @@ export default async function handler(req, res) {
 		console.error(err);
 		res.status(500).send('Internal Server Error');
 	}
-	
-	// Calculate points
+
+	// Response
 	let answer = {
 		your_guess: guess,
 		actual_location: location,
+		distance: 0,
+		new_highscore: false,
 		points: MAX_POINTS
 	}
 
-	answer.points -= calcPoints(guess, location);
+	answer.points -= calcPoints(guess, location, answer);
 
-	// todo: add points to username
+	// Add to score
+	try {
+		// getting highscore value
+		let highscore = await pool.query(
+			`SELECT high_score FROM users WHERE name = '${guess.username}'`);
+
+		// update highscore
+		if (answer.points > highscore.rows[0].high_score) {
+			answer.new_highscore = true;
+			await pool.query(
+			`UPDATE users SET high_score = ${answer.points} WHERE name = '${guess.username}'`);
+		}
+
+		// increment score
+		await pool.query(
+			`UPDATE users SET score = score + ${answer.points} WHERE name = '${guess.username}'`);
+		
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Internal Server Error');
+	}
 
 	res.status(200).json(answer);
-	console.log("You got " + answer.points + "!");
 }
 
-function calcPoints(guess, actual) {
+function calcPoints(guess, actual, answer) {
 
 	let deduct = 0.0;
 
@@ -64,10 +82,15 @@ function calcPoints(guess, actual) {
 	if (guess.building != actual.building) return MAX_POINTS;
 
 	// squared mean error
-	deduct = Math.log2(Math.sqrt(
+	deduct = Math.sqrt(
 		(guess.x - actual.x_coord) * (guess.x - actual.x_coord) + 
-		(guess.y - actual.y_coord) * (guess.y - actual.y_coord)));
-	deduct *= SCALE_FACTOR;
+		(guess.y - actual.y_coord) * (guess.y - actual.y_coord));
+
+	// store distance
+	answer.distance = deduct;
+	// store distance
+
+	deduct = Math.log2(deduct) * SCALE_FACTOR;
 
 	// Floor penalty
 	deduct += Math.abs(guess.floor - actual.value) * MISS_PENATLY;
