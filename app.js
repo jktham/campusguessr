@@ -22,9 +22,29 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
 	res.sendFile(__dirname + "/public/home.html");
 })
-
 app.get("/game", (req, res) => {
 	res.sendFile(__dirname + "/public/panorama/index.html");
+})
+
+// guess test
+app.get("/test", (req, res) => {
+	res.sendFile(__dirname + "/public/test.html");
+})
+app.post("/testSubmitGuess", async (req, res) => {
+	let guess = {
+		building: req.query.building || "",
+		floor: req.query.floor || "",
+		x: req.query.x || 0,
+		y: req.query.y || 0
+	}
+
+	// do db stuff
+
+	let answer = {
+		points: 9999
+	}
+
+	res.status(200).send(JSON.stringify(answer));
 })
 
 // postgres test

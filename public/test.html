@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<button id="test">submit test guess</button>
+</body>
+<script>
+	test.addEventListener("click", async function(e) {
+		let res = await fetch(window.location.origin + "/testSubmitGuess?building=HG&floor=F&x=11&y=22", {
+			method: "POST"
+		});
+		console.log(res);
+		let points = await res.json();
+		console.log(points);
+	});
+</script>
+</html>
