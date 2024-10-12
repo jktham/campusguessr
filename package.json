@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node .",
-    "real": "sudo $(which node) ."
+    "prod": "sudo $(which node) .",
+    "list": "sudo lsof -i:80",
+    "kill": "sudo killall node"
   },
   "author": "",
   "license": "ISC",

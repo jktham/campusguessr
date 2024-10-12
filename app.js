@@ -27,6 +27,7 @@ app.get("/game", (req, res) => {
 	res.sendFile(__dirname + "/public/panorama/index.html");
 })
 
+// postgres test
 app.get("/users", async (req, res) => {
 	try {
 		const result = await pool.query('SELECT * FROM users');
