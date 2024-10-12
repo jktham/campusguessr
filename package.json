@@ -1,20 +1,18 @@
 {
   "name": "campusguessr",
   "version": "1.0.0",
-  "main": "app.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node .",
-    "prod": "sudo $(which node) .",
-    "list": "sudo lsof -i:80",
-    "kill": "sudo killall node"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^4.21.1",
-    "path": "^0.12.7",
-    "pg": "^8.13.0"
+    "next": "^14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
