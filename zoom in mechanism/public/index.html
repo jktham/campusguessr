@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Zoom and Click Coordinates</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="image-wrapper">
+            <img id="zoom-image" src="/imgs/example.jpg" alt="Zoomable Image">
+        </div>
+        <div class="controls">
+            <button id="zoom-in">Zoom In</button>
+            <button id="zoom-out">Zoom Out</button>
+            <button id="reset">Reset</button>
+            <button id="get-coords">Get Pixel Coords</button>
+        </div>
+        <p id="coordinates">Click "Get Pixel Coords" to enable coordinate detection</p>
+    </div>
+
+    <script>
+        const image = document.getElementById('zoom-image');
+        const coordinatesText = document.getElementById('coordinates');
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+        const resetBtn = document.getElementById('reset');
+        const getCoordsBtn = document.getElementById('get-coords');
+
+        let scale = 1;
+        let originX = 0;
+        let originY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let coordsEnabled = false;
+
+        const defaultScale = 1;
+        const zoomFactor = 0.2;
+
+        // Mouse drag functionality for the image
+        image.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - originX;
+            startY = e.clientY - originY;
+        });
+
+        image.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                originX = e.clientX - startX;
+                originY = e.clientY - startY;
+                updateTransform();
+            }
+        });
+
+        image.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        image.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        // Zoom In/Out Button functionality
+        zoomInBtn.addEventListener('click', () => {
+            zoomAtCenter(zoomFactor);
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            zoomAtCenter(-zoomFactor);
+        });
+
+        // Reset Button functionality
+        resetBtn.addEventListener('click', () => {
+            scale = defaultScale;
+            originX = 0;
+            originY = 0;
+            updateTransform();
+        });
+
+        // Toggle Get Coordinates button functionality
+        getCoordsBtn.addEventListener('click', () => {
+            coordsEnabled = !coordsEnabled;
+            getCoordsBtn.textContent = coordsEnabled ? 'Disable Pixel Coords' : 'Get Pixel Coords';
+            coordinatesText.textContent = coordsEnabled
+                ? 'Click on the image to get pixel coordinates.'
+                : 'Click "Get Pixel Coords" to enable coordinate detection';
+        });
+
+        // Click event to get image coordinates
+        image.addEventListener('click', (e) => {
+            if (!coordsEnabled) return;
+
+            const rect = image.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / scale);
+            const y = Math.round((e.clientY - rect.top) / scale);
+            coordinatesText.textContent = `X: ${x}, Y: ${y}`;
+
+            // Send coordinates to the server
+            fetch('/save-coordinates', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ x, y })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            });
+        });
+
+        // Zoom function at the center of the screen
+        function zoomAtCenter(deltaScale) {
+            const rect = image.getBoundingClientRect();
+            const container = document.querySelector('.image-wrapper');
+            
+            // Get the center of the container
+            const containerCenterX = container.clientWidth / 2;
+            const containerCenterY = container.clientHeight / 2;
+            
+            // Convert center coordinates to image-relative coordinates
+            const imageCenterX = (containerCenterX - rect.left) / scale;
+            const imageCenterY = (containerCenterY - rect.top) / scale;
+
+            // Apply zoom
+            const newScale = scale + deltaScale;
+
+            // Prevent zooming out too far
+            if (newScale < 0.5) return;
+
+            // Adjust translation based on zoom
+            originX = (originX - imageCenterX) * (newScale / scale) + imageCenterX;
+            originY = (originY - imageCenterY) * (newScale / scale) + imageCenterY;
+            
+            // Update the scale
+            scale = newScale;
+
+            updateTransform();
+        }
+
+        // Helper function to update image transformation
+        function updateTransform() {
+            image.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
+        }
+    </script>
+</body>
+</html>

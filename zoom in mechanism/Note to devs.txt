@@ -1,0 +1,6 @@
+When running this, do:
+
+npm init -y
+npm install express body-parser
+
+node server.js
