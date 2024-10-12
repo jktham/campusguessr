@@ -12,7 +12,8 @@ export default async function handler(req, res) {
 		building: req.body.building || "",
 		floor: req.body.floor || "",
 		x: req.body.x || 0,
-		y: req.body.y || 0
+		y: req.body.y || 0,
+		username: req.body.username
 	}
 
 	// add points to user (need user_id)
@@ -54,6 +55,8 @@ export default async function handler(req, res) {
 	}
 
 	answer.points -= calcPoints(guess, location, guessID);
+
+	// todo: add points to username
 
 	res.status(200).json(answer);
 	console.log("You got " + answer.points + "!");

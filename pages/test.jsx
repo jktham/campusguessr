@@ -7,9 +7,15 @@ export default function Page() {
 	const { data, isLoading } = useSWR('/api/getUsers', fetcher)
 	if (isLoading) return <div>loading</div>
 
+	let loginText = "not logged in"
+	let username = localStorage.getItem("username")
+	if (username) {
+		loginText = `logged in as ${username}`
+	}
+
 	console.log(data)
 	return (
-		<div>
+		<div style={{display: 'flex', flexDirection: 'column', alignItems: 'start'}}>
 			<h1>got {data.length} users</h1>
 			<button onClick={getUsers}>get users</button>
 			<button onClick={submitGuess}>Submit guess</button>
@@ -17,6 +23,9 @@ export default function Page() {
 			<button onClick={startRound}>Start round</button>
 			<button onClick={getBuildings}>get buildings</button>
 			<button onClick={getFloors}>get floors</button>
+			<button onClick={login}>log in</button>
+			<button onClick={logout}>log out</button>
+			<div>{loginText}</div>
 		</div>
 	)
 	
@@ -38,7 +47,13 @@ async function submitGuess() {
 		building: "HG",
 		floor: "H",
 		x: 200,
-		y: 200
+		y: 200,
+		username: localStorage.getItem("username")
+	}
+
+	if (!guess.username) {
+		console.log("not logged in")
+		return
 	}
 
 	let res = await fetch(window.location.origin + "/api/submitGuess", {
@@ -107,4 +122,33 @@ async function getFloors() {
 	
 	res = await res.json().catch((e) => console.error(e));
 	console.log(res);
+}
+
+async function login() {
+	let user = {
+		name: prompt("enter username"),
+		password: prompt("enter password")
+	}
+
+	if (!user.name || !user.password) {
+		console.log("empty name or password")
+		return;
+	}
+
+	let res = await fetch(window.location.origin + "/api/login", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(user)
+	});
+	console.log(res);
+
+	if (res.status == 200) {
+		console.log(user)
+		localStorage.setItem("username", user.name);
+		localStorage.setItem("password", user.password);
+	}
+}
+
+async function logout() {
+	localStorage.clear();
 }
