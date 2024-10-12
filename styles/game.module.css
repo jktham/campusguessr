@@ -1,0 +1,49 @@
+.scores {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.5rem;
+	height: 100%;
+}
+
+.scores .header {
+	color: var(--fg1);
+	text-align: center;
+	font-family: "JetBrains Mono";
+	font-size: 3.2rem;
+	font-style: normal;
+	font-weight: 800;
+	line-height: normal;
+	transition-duration: .3s;
+	transition-property: font-size;
+}
+
+
+.scores .meta {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+
+.scores .meta p {
+	display: grid;
+	gap: 0.5rem;
+	grid-template-columns: 1fr min-content 1fr;
+}
+
+.scores .meta span:first-child {
+	text-align: right;
+}
+
+.scores > *:last-child {
+	margin-top: 1.5rem;
+}
+
+@media screen and (max-width: 40rem) {
+	.scores .header {
+		font-size: 2.4rem;
+	}
+}

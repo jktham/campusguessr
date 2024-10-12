@@ -28,7 +28,7 @@ export function Input({onEnter, style, type, placeholder }) {
 	return (
 		<>
 			<div className={clsx(styles.element, styles[style], "controls border")}>
-				<input typeof={type} onKeyDown={onKeyDown} className={"controls"} placeholder={placeholder} type="text"/>
+				<input type={type ?? "text"} onKeyDown={onKeyDown} className={"controls"} placeholder={placeholder}/>
 			</div>
 		</>
 	)
