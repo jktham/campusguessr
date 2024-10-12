@@ -25,6 +25,7 @@ export default function Page() {
 			<button onClick={getFloors}>get floors</button>
 			<button onClick={login}>log in</button>
 			<button onClick={logout}>log out</button>
+			<button onClick={loginOrRegister}>log in or register</button>
 			<div>{loginText}</div>
 		</div>
 	)
@@ -73,8 +74,8 @@ async function createUser() {
 		password: prompt("enter password")
 	}
 
-	if (!user.name || !user.password) {
-		console.log("empty name or password")
+	if (!user.name || !user.password || user.password.length < 8) {
+		console.log("empty name or password too short")
 		return;
 	}
 
@@ -132,8 +133,8 @@ async function login() {
 		password: prompt("enter password")
 	}
 
-	if (!user.name || !user.password) {
-		console.log("empty name or password")
+	if (!user.name || !user.password || user.password.length < 8) {
+		console.log("empty name or password too short")
 		return;
 	}
 
@@ -153,4 +154,29 @@ async function login() {
 
 async function logout() {
 	localStorage.clear();
+}
+
+async function loginOrRegister() {
+	let user = {
+		name: prompt("enter username"),
+		password: prompt("enter password")
+	}
+
+	if (!user.name || !user.password || user.password.length < 8) {
+		console.log("empty name or password too short")
+		return;
+	}
+
+	let res = await fetch(window.location.origin + "/api/loginOrRegister", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(user)
+	});
+	console.log(res);
+
+	if (res.status == 200) {
+		console.log(user)
+		localStorage.setItem("username", user.name);
+		localStorage.setItem("password", user.password);
+	}
 }
