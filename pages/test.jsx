@@ -11,6 +11,7 @@ export default function Page() {
 	return (
 		<div>
 			<h1>got {data.length} users</h1>
+			<button onClick={getUsers}>get users</button>
 			<button onClick={submitGuess}>Submit guess</button>
 			<button onClick={createUser}>Create user</button>
 			<button onClick={startRound}>Start round</button>
@@ -19,6 +20,16 @@ export default function Page() {
 		</div>
 	)
 	
+}
+
+async function getUsers() {
+	let res = await fetch(window.location.origin + `/api/getUsers`, {
+		method: "GET"
+	});
+	console.log(res);
+	
+	res = await res.json().catch((e) => console.error(e));
+	console.log(res);
 }
 
 async function submitGuess() {
