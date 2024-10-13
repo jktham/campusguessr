@@ -2,7 +2,7 @@ import { pool } from "../../utils/db.js"
 
 let MAX_POINTS = 1000.0;
 let MISS_PENATLY = 100.0;
-let SCALE_FACTOR = 1;
+let SCALE_FACTOR = 0.35;
 let CURRENCY_RATE = 100;
 
 export default async function handler(req, res) {
@@ -94,10 +94,10 @@ function calcPoints(guess, actual, answer) {
 		(guess.y - actual.y_coord) * (guess.y - actual.y_coord));
 
 	// store distance
-	answer.distance = deduct;
+	answer.distance = deduct / 17;
 	// store distance
 
-	deduct = Math.log2(deduct) * SCALE_FACTOR;
+	deduct = deduct * SCALE_FACTOR;
 
 	// Floor penalty
 	deduct += Math.abs(guess.floor - actual.value) * MISS_PENATLY;
