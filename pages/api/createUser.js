@@ -1,20 +1,28 @@
-import { pool } from "../../utils/db.js"
+import { pool } from "../../utils/db.js";
+import bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
-	let user = {
-		name: req.body.name || "",
-		password: req.body.password || ""
-	}
+    // Extract user data from request body
+    let user = {
+        name: req.body.name || "",
+        password: req.body.password || ""
+    };
 
-	// todo: sanitize input :3
-	// todo: hash password
+    try {
+        // Hash the password with bcrypt (saltRounds defines the salt complexity)
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(user.password, saltRounds);
 
-	try {
-		const result = await pool.query(`INSERT INTO users(name, password) VALUES('${user.name}', '${user.password}')`);
-		res.status(200).send(`created user ${user.name}`);
+        // Use parameterized query to prevent SQL injection
+        const query = `INSERT INTO users(name, password) VALUES($1, $2)`;
+        const values = [user.name, hashedPassword];
 
-	} catch (err) {
-		console.error(err);
-		res.status(500).send(`user ${user.name} could not be created`);
-	}
+        // Execute the query
+        const result = await pool.query(query, values);
+
+        res.status(200).send(`created user ${user.name}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(`user ${user.name} could not be created`);
+    }
 }

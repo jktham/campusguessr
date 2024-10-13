@@ -1,26 +1,42 @@
-import { pool } from "../../utils/db.js"
-import { readdirSync } from 'fs'
+import { promises as fs } from 'fs';
+import path from 'path';
+import { pool } from "../../utils/db.js";
 
-function getDirectories(source) {
-	return readdirSync(source, { withFileTypes: true })
-		.filter(dirent => dirent.isDirectory())
-		.map(dirent => dirent.name)
+async function getDirectories(source) {
+    try {
+        const dirents = await fs.readdir(source, { withFileTypes: true });
+        return dirents.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+    } catch (err) {
+        console.error("Error reading directory:", err);
+        return [];
+    }
 }
 
 export default async function handler(req, res) {
-	let buildings = [];
-	buildings.push({
-		code: "ALL",
-		topscore: 800
-	})
+    let buildings = [
+        {
+            code: "ALL",
+            topscore: 800
+        }
+    ];
 
-	let subdirs = getDirectories("./public/floorplans")
-	for (let name of subdirs) {
-		buildings.push({
-			code: name,
-			topscore: 800
-		})
-	}
-	
-	res.json(buildings);
+    // Get the absolute path to the directory
+    const floorplansPath = path.join(process.cwd(), 'public', 'floorplans');
+    
+    try {
+        let subdirs = await getDirectories(floorplansPath);
+
+        for (let name of subdirs) {
+            buildings.push({
+                code: name,
+                topscore: 800
+            });
+        }
+        
+        res.status(200).json(buildings);
+
+    } catch (err) {
+        console.error("Error getting directories:", err);
+        res.status(500).send("Internal Server Error");
+    }
 }
