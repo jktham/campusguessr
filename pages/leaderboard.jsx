@@ -11,16 +11,22 @@ export default function Home() {
 	const { data, isLoading } = useSWR('/api/getUsers', fetcher)
 	if (isLoading) return <div>loading</div>
 
-	data.sort((a, b) => b.high_score - a.high_score)
+	let data1 = data;
+	let data2 = data;
+	data1.sort((a, b) => b.high_score - a.high_score)
+	data2.sort((a, b) => b.star_currency - a.star_currency)
 	console.log(data)
 
 	return <div className={"wrapper"}>
 		<SEO/>
 		<Navigation header={"Leaderboard"}/>
 
-		<main>
+		<main className={styles.mainlist}>
 			<div className={styles.list}>
-				{data.map(user => <div className={styles.user}><p className={styles.usertext}>{user.name}, highscore: {user.high_score}, score: {user.score}</p></div>)}
+				{data.map(user => <div className={styles.user}><p className={styles.usertext}>{user.name}, highscore: {user.high_score}</p></div>)}
+			</div>
+			<div className={styles.list}>
+				{data.map(user => <div className={styles.user}><p className={styles.usertext}>{user.name}, {user.star_currency}⭐</p></div>)}
 			</div>
 		</main>
 	</div>
