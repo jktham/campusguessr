@@ -4,31 +4,23 @@ import {Center, ItemContainer} from '../components/container'
 import {Input, Button} from '../components/control'
 import {useState} from 'react'
 import Card from '../components/card'
+import useSWR from 'swr'
+import {useRouter} from 'next/router'
+
+const fetcher = (...args) => fetch(...args).then(res => res.json())
 
 export default function Home() {
 
+	const router = useRouter()
+
 	const [user, setUser] = useState(undefined)
-	const [building, setBuilding] = useState(false)
-	const [floor, setFloor] = useState(false)
+	const [building, setBuilding] = useState(undefined)
+	const [floor, setFloor] = useState(undefined)
+	const { data: buildings } = useSWR(user ? '/api/getBuildings' : null, fetcher);
+	const { data: floors } = useSWR(building && building !== "ALL" ? '/api/getFloors?building=' + building : null, fetcher);
 
-	return user ? <div className={"wrapper"}>
-		<SEO/>
-		<Navigation header={"Buildings"}/>
 
-		<main>
-			<ItemContainer>
-				<Card data={{code: "ALL"}}></Card>
-				<Card></Card>
-				<Card></Card>
-				<Card></Card>
-				<Card></Card>
-				<Card></Card>
-				<Card></Card>
-				<Card></Card>
-				<Card></Card>
-			</ItemContainer>
-		</main>
-	</div> : <div className={"wrapper"}>
+	if (!user) return <div className={"wrapper"}>
 		<SEO/>
 		<Navigation/>
 
@@ -40,6 +32,20 @@ export default function Home() {
 					<Button style={"primary"} onClick={() => setUser("serpentine")}>&gt; play</Button>
 				</form>
 			</Center>
+		</main>
+	</div>
+
+	if (building === "ALL" || building && floor) router.push("/game?building=" + building + "&floor=" + floor);
+
+	return <div className={"wrapper"}>
+		<SEO/>
+		<Navigation header={building ? "Floors" : "Buildings"}/>
+
+		<main>
+			<ItemContainer>
+				{building ? floors?.map(b => <Card onClick={setFloor} data={b}></Card>)
+				: buildings?.map(b => <Card onClick={setBuilding} data={b}></Card>)}
+			</ItemContainer>
 		</main>
 	</div>
 }

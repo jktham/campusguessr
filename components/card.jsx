@@ -4,16 +4,15 @@ import {Bar} from './container'
 import Link from 'next/link'
 
 
-export default function Card({data}) {
+export default function Card({data, onClick}) {
+
 	return (
-		<Link href={"/game"}>
-			<div className={clsx(styles.card, "border")}>
-				<header className={styles.header}>{data?.code ?? "N/A"}</header>
-				<Bar>
-					<span className={"controls"}>20 pts</span>
-					<span className={"controls"}>-&gt;</span>
-				</Bar>
-			</div>
-		</Link>
+		<button onClick={() => onClick(data.code)} className={clsx(styles.card, "border")}>
+			<header className={styles.header}>{data.code ?? "N/A"}</header>
+			<Bar>
+				<span className={"controls"}>{data.topscore} pts</span>
+				<span className={"controls"}>-&gt;</span>
+			</Bar>
+		</button>
 	)
 }
