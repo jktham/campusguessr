@@ -1,39 +1,104 @@
-import { pool } from "./utils/db.js"
+import { pool } from "../../utils/db.js"
+
+let PREM_RATE = 0.1;
+let STAR_RATE = 0.001;
 
 export default async function handler(req, res) {
-	let gambler_stake = {
-		user: req.body.userID || 0,
-		stake: req.body.star || 0,
-		drop: req.body.dropID || "",
-		dropchance: 0
+	let gambler = {
+		name: req.body.username || 0,
+		mode: req.body.gambling || "",
+		stake: req.body.stake || 0,
+		cur: 0,
+		starcur: 0
 	}
 
-	// Get dropchance
+	// Get DATA
 	try {
-		const result = await pool.query(
-			`SELECT * FROM drops where drop_id = '${gambler_stake.drop}'`);
+		const data = await pool.query(
+			`SELECT currency, premium_currency FROM users WHERE name = '${gambler.name}'`);
 
-		if (result.rowCount != 1) {
+		if (data.rowCount != 1) {
 			console.error("MISSING DB ENTRY");
+			res.status(500).send('Internal Server Error');
 			return;
 		}
-		
-		gambler_stake.dropchance = result.rows[0].dropchance;
-		// console.log(location);
+
+		gambler.cur = data.rows[0].premium_currency;
+		gambler.starcur = data.rows[0].star_currency;
 
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Internal Server Error');
 	}
 
-	if (gambler_stake.stake > 0) {
-		gambler_stake.dropchance *= 4;
+	let answer = {
+		played: false,
+		won: false
 	}
 
-	res.status(200).json(roll(gambler_stake.dropchance));
+	if (gambler.mode = "premium") {
+		if (gambler.cur < gambler.stake) {
+			res.status(200).json(answer);
+			return;
+		} else {
+			answer.played = true;
+			try {
+				await pool.query(
+					`UPDATE users SET currency = currency - ${gambler.stake} WHERE name = '${gambler.name}'`);
+			} catch (err) {
+				console.error(err);
+				res.status(500).send('Internal Server Error');
+				return;
+			}
+			if (roll(PREM_RATE)) {
+				answer.won = true;
+				try {
+					await pool.query(
+						`UPDATE users SET premium_currency = premium_currency + ${gambler.stake} WHERE name = '${gambler.name}'`);
+				} catch (err) {
+					console.error(err);
+					res.status(500).send('Internal Server Error');
+					return;
+				}
+			}
+		}
+	} else if (gambler.mode = "star") {
+		if (gambler.starcur < gambler.stake) {
+			res.status(200).json(answer);
+			return;
+		} else {
+			answer.played = true;
+			try {
+				await pool.query(
+					`UPDATE users SET currency = currency - ${gambler.stake} WHERE name = '${gambler.name}'`);
+			} catch (err) {
+				console.error(err);
+				res.status(500).send('Internal Server Error');
+				return;
+			}
+			if (roll(STAR_RATE)) {
+				answer.won = true;
+				try {
+					await pool.query(
+						`UPDATE users SET star_currency = star_currency + ${gambler.stake} WHERE name = '${gambler.name}'`);
+					await pool.query(
+						`UPDATE users SET premium_currency = premium_currency - ${gambler.stake} WHERE name = '${gambler.name}'`);
+				} catch (err) {
+					console.error(err);
+					res.status(500).send('Internal Server Error');
+					return;
+				}
+			}
+		}
+	} else {
+		console.error(err);
+		res.status(500).send('No such gambling mode');
+	}
+
+	res.status(200).json(answer);
 }
 
 function roll(dropchance) {
-	roll = Math.random();
+	let roll = Math.random();
 	return roll < dropchance;
 }

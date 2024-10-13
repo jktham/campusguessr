@@ -37,6 +37,7 @@ export default async function handler(req, res) {
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Internal Server Error');
+		return;
 	}
 
 	// Response
@@ -76,6 +77,7 @@ export default async function handler(req, res) {
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Internal Server Error');
+		return;
 	}
 
 	res.status(200).json(answer);
