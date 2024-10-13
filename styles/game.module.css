@@ -43,7 +43,7 @@
 
 .game {
 	display: grid;
-	grid-template-columns: 1.5rem auto auto 1.5rem;
+	grid-template-columns: 1.5rem auto 30% 1.5rem;
 	grid-template-rows: 1.5rem auto 1.5rem 40% 1.5rem;
 	height: 100%;
 	width: 100%;
