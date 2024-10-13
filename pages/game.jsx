@@ -5,6 +5,9 @@ import {useEffect, useState} from 'react'
 import {Center} from '../components/container'
 import {Button} from '../components/control'
 import {useSearchParams} from 'next/navigation'
+import PanoramicViewer from '../components/panoramicViewer'
+import LocationPicker from '../components/locationPicker'
+import clsx from 'clsx'
 
 export default function Home() {
 
@@ -39,8 +42,22 @@ export default function Home() {
 		setGameState('running');
 	}
 
-	const onGuess = async () => {
-		let res = await submitGuess();
+	const onGuess = async (loc) => {
+
+		let guess = {
+			image_id: image.split("/").pop().split(".")[0],
+			building: building,
+			floor: loc.floor,
+			x: loc.x,
+			y: loc.y,
+			username: localStorage.getItem("username"),
+			time: time
+		}
+
+		console.log("GUESS-----------------")
+		console.log(guess)
+
+		let res = await submitGuess(guess);
 		setPoints(Math.round(res.points));
 		setDistance(Math.round(res.distance));
 		setGameState('end');
@@ -61,14 +78,12 @@ export default function Home() {
 				</div>
 			}
 
-			{gameState === 'running' && <Center>
-				<div className={styles.container}>
-					<img className={styles.image} src={image}></img>
-					<Button style={'primary'} onClick={onGuess}>&gt; submit</Button>
-				</div>
-			</Center>}
+			{gameState === 'running' && <div className={clsx(styles.game, "border")}>
+				<div className={clsx(styles.viewer, "border")}><PanoramicViewer url={image}></PanoramicViewer></div>
+				<div className={styles.picker}><LocationPicker onGuess={onGuess}></LocationPicker></div>
+			</div>}
 
-			{gameState === "end" && <Center>
+			{gameState === 'end' && <Center>
 				<div className={styles.scores}>
 					<header className={styles.header}>{points} pts 🎉</header>
 					<div className={styles.meta}>
@@ -91,6 +106,8 @@ async function startRound() {
 		floors: urlParams.get('floor')
 	}
 
+	console.log("starting round...")
+
 	let res = await fetch(window.location.origin + "/api/startRound", {
 		method: "POST",
 		headers: {'Content-Type': 'application/json'},
@@ -107,16 +124,7 @@ async function startRound() {
 	return res;
 }
 
-async function submitGuess() {
-	let guess = { // todo: fill in all of these with real values
-		image_id: 1,
-		building: "HG",
-		floor: 6,
-		x: 200,
-		y: 200,
-		username: localStorage.getItem("username"),
-		time: 60
-	}
+async function submitGuess(guess) {
 
 	if (!guess.username) {
 		console.log("not logged in")

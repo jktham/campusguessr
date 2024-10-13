@@ -19,7 +19,6 @@
 	transition-property: font-size;
 }
 
-
 .scores .meta {
 	display: flex;
 	flex-direction: column;
@@ -42,21 +41,33 @@
 	margin-top: 1.5rem;
 }
 
+.game {
+	display: grid;
+	grid-template-columns: 1.5rem auto auto 1.5rem;
+	grid-template-rows: 1.5rem auto 1.5rem 40% 1.5rem;
+	height: 100%;
+	width: 100%;
+}
+
+.viewer {
+	overflow: hidden;
+	grid-area: 1 / 1 / 6 / 5;
+}
+
+.picker {
+	grid-area: 4 / 3 / 5 / 4;
+}
+
 @media screen and (max-width: 40rem) {
 	.scores .header {
 		font-size: 2.4rem;
 	}
-}
 
-/* temp */
+	.viewer {
+		grid-area: 1 / 1 / 3 / 5;
+	}
 
-.container {
-	display: flex;
-	flex-direction: column;
-}
-
-.image {
-	width: 100%;
-	height: auto;
-	margin: 10px;
+	.picker {
+		grid-area: 4 / 2 / 5 / 4;
+	}
 }
