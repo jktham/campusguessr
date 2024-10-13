@@ -76,9 +76,14 @@ const ImageZoom = () => {
       return;
     }
 
+    let imageElement = document.getElementById("floorPlanImage");
+
+    console.log(imageElement.height, imageElement.naturalHeight);
+    let screenScale = imageElement.naturalHeight / imageElement.height;
+
     const rect = imageRef.current.getBoundingClientRect();
-    const x = Math.round((e.clientX - rect.left) / scale);
-    const y = Math.round((e.clientY - rect.top) / scale);
+    const x = Math.round(screenScale * (e.clientX - rect.left) / scale);
+    const y = Math.round(screenScale * (e.clientY - rect.top) / scale);
 
     setCoordinates(`X: ${x}, Y: ${y}`);
 
@@ -120,7 +125,7 @@ const ImageZoom = () => {
 
       {/* Image with zoom and drag functionality */}
       <div className={styles.imageWrapper}>
-        <img
+        <img id="floorPlanImage"
           ref={imageRef}
           src={`/imgs/floorplans/HG/${selectedImage}`} // Dynamic image based on dropdown
           alt="Zoomable Floorplan"
