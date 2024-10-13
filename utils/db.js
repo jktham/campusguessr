@@ -2,8 +2,8 @@ const { Pool } = require('pg');
 
 export const pool = new Pool({
 	user: 'postgres',
-	password: 'KvbKnO42KCnRjbiERsAk', // we ball
-	host: '09-direct.viscon-hackathon.ch',
+	password: 'Mmm8KmZhyP807e', // we ball
+	host: 'localhost',
 	port: 5432,
 	database: 'postgres'
 })
