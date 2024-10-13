@@ -10,6 +10,7 @@
 
 .list {
 	width: 95%;
+	grid-row: 2;
 	overflow: scroll;
 	background-color: var(--bg3);
 }
@@ -21,4 +22,10 @@
 	height: 2rem;
 	margin: 0.5rem;
 	background-color: var(--bg1);
+}
+
+.buttons {
+	grid-row: 1;
+	display: flex;
+	column-gap: 20px;
 }
