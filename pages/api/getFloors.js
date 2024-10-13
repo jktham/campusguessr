@@ -10,6 +10,10 @@ function getFiles(source) {
 export default async function handler(req, res) {
 	let building = (req.query.building || "HG").toUpperCase();
 	let floors = [];
+	floors.push({
+		code: "ALL",
+		topscore: 200
+	})
 
 	try {
 		let subfiles = getFiles(`./public/floorplans/${building}`)

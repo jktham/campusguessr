@@ -6,6 +6,7 @@ import {useState} from 'react'
 import Card from '../components/card'
 import useSWR from 'swr'
 import {useRouter} from 'next/router'
+import React from 'react'
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
@@ -26,10 +27,10 @@ export default function Home() {
 
 		<main>
 			<Center>
-				<form className={"form"} action=""> {/* TODO: jonas do this idk how forms work */}
+				<form className={"form"} action="" onSubmit={(e) => e.preventDefault()}> {/* TODO: jonas do this idk how forms work */} 
 					<Input style={"secondary"} placeholder={"> username"}></Input>
 					<Input style={"secondary"} type={"password"} placeholder={"> password"}></Input>
-					<Button style={"primary"} onClick={() => setUser("serpentine")}>&gt; play</Button>
+					<Button style={"primary"} onClick={async () => {await login(); setUser(localStorage.getItem("username"))}}>&gt; play</Button>
 				</form>
 			</Center>
 		</main>
@@ -48,4 +49,31 @@ export default function Home() {
 			</ItemContainer>
 		</main>
 	</div>
+}
+
+async function login() {
+	let user = { // todo: get from form, idk how react works >_< aaaa
+		name: prompt("enter username"),
+		password: prompt("enter password")
+	}
+
+	if (!user.name || !user.password || user.password.length < 8) {
+		alert("empty name or password too short")
+		return;
+	}
+
+	let res = await fetch(window.location.origin + "/api/loginOrRegister", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(user)
+	});
+	console.log(res);
+
+	if (res.status == 200) {
+		console.log(user)
+		localStorage.setItem("username", user.name);
+		localStorage.setItem("password", user.password);
+	} else {
+		alert("wrong password")
+	}
 }
