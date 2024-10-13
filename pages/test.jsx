@@ -49,7 +49,8 @@ async function submitGuess() {
 		floor: 6,
 		x: 200,
 		y: 200,
-		username: localStorage.getItem("username")
+		username: localStorage.getItem("username"),
+		time: 60
 	}
 
 	if (!guess.username) {
