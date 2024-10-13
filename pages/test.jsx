@@ -186,7 +186,7 @@ async function loginOrRegister() {
 
 async function gambleP() {
 
-	let gambler = {
+	let gambler1 = {
 		username: localStorage.getItem("username"),
 		gambling: "premium",
 		stake: 2
@@ -195,7 +195,7 @@ async function gambleP() {
 	let res = await fetch(window.location.origin + "/api/gambling", {
 		method: "POST",
 		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify(gambler)
+		body: JSON.stringify(gambler1)
 	});
 	console.log(res);
 	res = await res.json().catch((e) => console.error(e));
@@ -204,7 +204,7 @@ async function gambleP() {
 
 async function gambleS() {
 
-	let gambler = {
+	let gambler2 = {
 		username: localStorage.getItem("username"),
 		gambling: "star",
 		stake: 2
@@ -213,7 +213,7 @@ async function gambleS() {
 	let res = await fetch(window.location.origin + "/api/gambling", {
 		method: "POST",
 		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify(gambler)
+		body: JSON.stringify(gambler2)
 	});
 	console.log(res);
 	res = await res.json().catch((e) => console.error(e));
