@@ -1,18 +1,23 @@
-import { useState } from "react";
-import styles from "/styles/viewer.module.css"
+import { useState, useEffect } from "react";
+import styles from "/styles/viewer.module.css";
 
 const IMAGES = 21;
-let randImageNum = Math.floor(Math.random() * IMAGES);
-let url = "/imgs/pans/"+ randImageNum +".jpg";
 
 export default function Viewer() {
     const [scrollPosition, setScrollPosition] = useState(0);
+    const [url, setUrl] = useState("");
+
+    // Randomize the image URL on component load
+    useEffect(() => {
+        let randImageNum = Math.floor(Math.random() * IMAGES);
+        let randomUrl = `/imgs/pans/${randImageNum}.jpg`;
+        setUrl(randomUrl);
+    }, []);
 
     const scrollLeft = () => {
         const panorama = document.getElementById("panorama-container");
 
-
-        // panorama.scrollLeft -= 100;
+        // Scroll left with animation
         for (let i = 0; i < 100; i++) {
             setTimeout(() => {
                 panorama.scrollLeft -= 1;
@@ -23,7 +28,8 @@ export default function Viewer() {
 
     const scrollRight = () => {
         const panorama = document.getElementById("panorama-container");
-        // panorama.scrollLeft += 100;
+
+        // Scroll right with animation
         for (let i = 0; i < 100; i++) {
             setTimeout(() => {
                 panorama.scrollLeft += 1;
@@ -32,13 +38,12 @@ export default function Viewer() {
         setScrollPosition(panorama.scrollLeft);
     };
 
-    
     return (
         <div className={styles.panoramaContainer} id="panorama-container">
             <div className={`${styles.scrollArrow} ${styles.leftArrow}`} onClick={scrollLeft}>
                 &lt;
             </div>
-            <img className={styles.panorama} src={url} alt="Panorama" />
+            {url && <img className={styles.panorama} src={url} alt="Panorama" />}
             <div className={`${styles.scrollArrow} ${styles.rightArrow}`} onClick={scrollRight}>
                 &gt;
             </div>
