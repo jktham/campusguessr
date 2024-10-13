@@ -17,7 +17,7 @@ export default function Select() {
 	const { data: buildings } = useSWR('/api/getBuildings', fetcher);
 	const { data: floors } = useSWR(building ? '/api/getFloors?building=' + building : null, fetcher);
 
-	if (building === "ALL" || building && floor) router.push("/game?building=" + building + "&floor=" + floor);
+	if (building === "ALL" || building && floor) router.push("/game?building=" + building + (floor ? "&floor=" + floor : ""));
 
 	return <div className={"wrapper"}>
 		<SEO/>

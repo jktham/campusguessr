@@ -1,6 +1,6 @@
 import SEO from '../components/SEO'
 import Navigation from '../components/navigation'
-import {Bar, Center, ItemContainer} from '../components/container'
+import {Bar, Center} from '../components/container'
 import {Input, Button} from '../components/control'
 import {useEffect, useState} from 'react'
 import styles from '../styles/game.module.css'
@@ -8,7 +8,7 @@ import styles from '../styles/game.module.css'
 
 export default function Select() {
 
-	const [user, setUser] = useState("serpentine")
+	const [user, setUser] = useState(undefined)
 	const [score, setScore] = useState(0)
 
 	useEffect(() => {

@@ -4,15 +4,19 @@ import Navigation from '../components/navigation'
 import {useEffect, useState} from 'react'
 import {Center} from '../components/container'
 import {Button} from '../components/control'
+import {useSearchParams} from 'next/navigation'
 
 export default function Home() {
 
+	const searchParams = useSearchParams()
+
 	const [gameState, setGameState] = useState("start")
+	const [image, setImage] = useState("")
 	const [time, setTime] = useState(0)
 	const [points, setPoints] = useState(0)
 	const [distance, setDistance] = useState(0)
-	const map = "HG E"
-	const [image, setImage] = useState("")
+	const building = searchParams.get("building") || "", floor = (searchParams.get("floor") ?? "");
+	const map = building + " " + floor
 
 	const format = time => {
 		const minutes = Math.floor((time % 360000) / 6000);
@@ -29,6 +33,19 @@ export default function Home() {
 		return () => clearInterval(intervalId);
 	}, [gameState === "running", time]);
 
+	const onStart = async () => {
+		let res = await startRound();
+		setImage(res.image_filepath.split("./public")[1])
+		setGameState('running');
+	}
+
+	const onGuess = async () => {
+		let res = await submitGuess();
+		setPoints(Math.round(res.points));
+		setDistance(Math.round(res.distance));
+		setGameState('end');
+	}
+
 	return (<div className={"wrapper"}>
 		<SEO/>
 		<Navigation header={gameState === "running" && format(time)}/>
@@ -40,23 +57,14 @@ export default function Home() {
 					<div className={styles.meta}>
 						<p><span>map</span><span>:</span><span>{map}</span></p>
 					</div>
-					<Button style={'primary'} onClick={async () => {
-						let res = await startRound();
-						setImage(res.image_filepath.split("./public")[1])
-						setGameState('running');
-					}}>&gt; start</Button>
+					<Button style={'primary'} onClick={onStart}>&gt; start</Button>
 				</div>
 			}
 
 			{gameState === 'running' && <Center>
 				<div className={styles.container}>
 					<img className={styles.image} src={image}></img>
-					<Button style={'primary'} onClick={async () => {
-						let res = await submitGuess();
-						setPoints(Math.round(res.points));
-						setDistance(Math.round(res.distance));
-						setGameState('end');
-					}}>&gt; submit</Button>
+					<Button style={'primary'} onClick={onGuess}>&gt; submit</Button>
 				</div>
 			</Center>}
 
@@ -77,7 +85,6 @@ export default function Home() {
 
 async function startRound() {
 	const urlParams = new URLSearchParams(window.location.search);
-	const myParam = urlParams.get('myParam');
 
 	let mode = {
 		buildings: urlParams.get('building'),
