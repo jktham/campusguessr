@@ -9,7 +9,12 @@ export default async function handler(req, res) {
 
     try {
         // Use parameterized queries to prevent SQL injection
-        const imageMapRes = await pool.query('SELECT * FROM image_map WHERE building = $1', [mode.buildings]);
+		let imageMapRes;
+		if (mode.buildings == "ALL") {
+			imageMapRes = await pool.query('SELECT * FROM image_map');
+		} else {
+			imageMapRes = await pool.query('SELECT * FROM image_map WHERE building = $1', [mode.buildings]);
+		}
 
         if (imageMapRes.rowCount === 0) {
             res.status(404).send('No images found for the specified building');

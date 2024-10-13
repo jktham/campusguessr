@@ -22,6 +22,7 @@ export default async function handler(req, res) {
     ];
 
     // Use path.join to handle cross-platform paths
+    if (building == "ALL") building = "HG";
     const buildingPath = path.join(process.cwd(), 'public', 'floorplans', building);
 
     try {
