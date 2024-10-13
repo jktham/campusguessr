@@ -64,10 +64,10 @@ export default async function handler(req, res) {
 
 		// dirty fix
 		if (isNaN(answer.points)) {
-			answer.points = Math.random() * 100;
+			answer.points = Math.random() * 1000;
 		}
 		if (isNaN(answer.earned)) {
-			answer.earned = Math.random() * 100;
+			answer.earned = Math.random() * 1000;
 		}
 		
 		// update highscore
