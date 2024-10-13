@@ -14,8 +14,11 @@ export default async function handler(req, res) {
 		floor: req.body.floor || 0,
 		x: req.body.x || 0,
 		y: req.body.y || 0,
-		username: req.body.username
+		username: req.body.username,
+		time: req.body.time || 0
 	}
+
+	// todo: include time in score calculation
 
 	// get true location:
 	let location;
