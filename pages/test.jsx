@@ -7,9 +7,15 @@ export default function Page() {
 	const { data, isLoading } = useSWR('/api/getUsers', fetcher)
 	if (isLoading) return <div>loading</div>
 
+	let loginText = "not logged in"
+	let username = localStorage.getItem("username")
+	if (username) {
+		loginText = `logged in as ${username}`
+	}
+
 	console.log(data)
 	return (
-		<div>
+		<div style={{display: 'flex', flexDirection: 'column', alignItems: 'start'}}>
 			<h1>got {data.length} users</h1>
 			<button onClick={getUsers}>get users</button>
 			<button onClick={submitGuess}>Submit guess</button>
@@ -17,6 +23,10 @@ export default function Page() {
 			<button onClick={startRound}>Start round</button>
 			<button onClick={getBuildings}>get buildings</button>
 			<button onClick={getFloors}>get floors</button>
+			<button onClick={login}>log in</button>
+			<button onClick={logout}>log out</button>
+			<button onClick={loginOrRegister}>log in or register</button>
+			<div>{loginText}</div>
 		</div>
 	)
 	
@@ -34,11 +44,18 @@ async function getUsers() {
 
 async function submitGuess() {
 	let guess = {
-		image_id: 4,
+		image_id: 1,
 		building: "HG",
-		floor: "F",
-		x: 100,
-		y: 200
+		floor: 6,
+		x: 200,
+		y: 200,
+		username: localStorage.getItem("username"),
+		time: 60
+	}
+
+	if (!guess.username) {
+		console.log("not logged in")
+		return
 	}
 
 	let res = await fetch(window.location.origin + "/api/submitGuess", {
@@ -58,8 +75,8 @@ async function createUser() {
 		password: prompt("enter password")
 	}
 
-	if (!user.name || !user.password) {
-		console.log("empty name or password")
+	if (!user.name || !user.password || user.password.length < 8) {
+		console.log("empty name or password too short")
 		return;
 	}
 
@@ -86,6 +103,8 @@ async function startRound() {
 
 	res = await res.json().catch((e) => console.error(e));
 	console.log(res);
+
+	console.log(window.location.origin + res.image_filepath.split("./public")[1])
 }
 
 async function getBuildings() {
@@ -107,4 +126,58 @@ async function getFloors() {
 	
 	res = await res.json().catch((e) => console.error(e));
 	console.log(res);
+}
+
+async function login() {
+	let user = {
+		name: prompt("enter username"),
+		password: prompt("enter password")
+	}
+
+	if (!user.name || !user.password || user.password.length < 8) {
+		console.log("empty name or password too short")
+		return;
+	}
+
+	let res = await fetch(window.location.origin + "/api/login", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(user)
+	});
+	console.log(res);
+
+	if (res.status == 200) {
+		console.log(user)
+		localStorage.setItem("username", user.name);
+		localStorage.setItem("password", user.password);
+	}
+}
+
+async function logout() {
+	localStorage.clear();
+}
+
+async function loginOrRegister() {
+	let user = {
+		name: prompt("enter username"),
+		password: prompt("enter password")
+	}
+
+	if (!user.name || !user.password || user.password.length < 8) {
+		console.log("empty name or password too short")
+		return;
+	}
+
+	let res = await fetch(window.location.origin + "/api/loginOrRegister", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(user)
+	});
+	console.log(res);
+
+	if (res.status == 200) {
+		console.log(user)
+		localStorage.setItem("username", user.name);
+		localStorage.setItem("password", user.password);
+	}
 }

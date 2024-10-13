@@ -1,19 +1,21 @@
 import styles from "/styles/navigation.module.css";
+import Link from 'next/link'
 
-export default function Navigation({pageName}) {
+export default function Navigation({header}) {
 
-	const username = undefined;
-	const score = undefined;
+	const username = "serpentine";
+	const score = "3000";
 
 	return (
 		<>
 			<div className={styles.title}>
-				<span className={styles.logo}>campusguessr</span>
+				<Link href={"/"}><span className={styles.logo}>campusguessr</span></Link>
 			</div>
-			{pageName && <div className={styles.header}><h1>{pageName}</h1></div>}
+			{header && <div className={styles.header}><h1>{header}</h1></div>}
 			<div className={styles.footer}>
-				<p>user : {username ?? "-"}</p>
-				<p>score : {score ?? "-"}</p>
+				{/*<p>user : {username ?? "-"}</p>
+				<p>score : {score ?? "-"}</p>*/}
+				<p>{username} // {score}</p>
 			</div>
 		</>
 	);

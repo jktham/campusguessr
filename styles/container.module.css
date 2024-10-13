@@ -4,6 +4,14 @@
 	gap: 1.5rem;
 }
 
+.center {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .bar {
 	height: 2.25rem;
 	display: flex;
