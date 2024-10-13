@@ -62,6 +62,14 @@ export default async function handler(req, res) {
 		let highscore = await pool.query(
 			`SELECT high_score FROM users WHERE name = '${guess.username}'`);
 
+		// dirty fix
+		if (isNaN(answer.points)) {
+			answer.points = Math.random() * 100;
+		}
+		if (isNaN(answer.earned)) {
+			answer.earned = Math.random() * 100;
+		}
+		
 		// update highscore
 		if (answer.points >= highscore.rows[0].high_score + 0.0001) {
 			answer.new_highscore = true;
