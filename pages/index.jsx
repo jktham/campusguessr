@@ -1,4 +1,3 @@
-
 import SEO from '../components/SEO'
 import Navigation from '../components/navigation'
 import {Bar, Center, ItemContainer} from '../components/container'

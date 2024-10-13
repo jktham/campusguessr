@@ -12,6 +12,7 @@ export default function Home() {
 	const [points, setPoints] = useState(0)
 	const [distance, setDistance] = useState(0)
 	const map = "HG E"
+	const [image, setImage] = useState("")
 
 	const format = time => {
 		const minutes = Math.floor((time % 360000) / 6000);
@@ -39,12 +40,24 @@ export default function Home() {
 					<div className={styles.meta}>
 						<p><span>map</span><span>:</span><span>{map}</span></p>
 					</div>
-					<Button style={'primary'} onClick={() => setGameState('running')}>&gt; start</Button>
+					<Button style={'primary'} onClick={async () => {
+						let res = await startRound();
+						setImage(res.image_filepath.split("./public")[1])
+						setGameState('running');
+					}}>&gt; start</Button>
 				</div>
 			}
 
 			{gameState === 'running' && <Center>
-				<Button style={'primary'} onClick={() => setGameState('end')}>&gt; stop</Button>
+				<div className={styles.container}>
+					<img className={styles.image} src={image}></img>
+					<Button style={'primary'} onClick={async () => {
+						let res = await submitGuess();
+						setPoints(Math.round(res.points));
+						setDistance(Math.round(res.distance));
+						setGameState('end');
+					}}>&gt; submit</Button>
+				</div>
 			</Center>}
 
 			{gameState === "end" && <Center>
@@ -60,4 +73,59 @@ export default function Home() {
 			</Center>}
 		</main>
 	</div>)
+}
+
+async function startRound() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const myParam = urlParams.get('myParam');
+
+	let mode = {
+		buildings: urlParams.get('building'),
+		floors: urlParams.get('floor')
+	}
+
+	let res = await fetch(window.location.origin + "/api/startRound", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(mode)
+	});
+	console.log(res);
+
+	res = await res.json().catch((e) => console.error(e));
+	console.log(res);
+
+	// image file:
+	console.log(window.location.origin + res.image_filepath.split("./public")[1])
+
+	return res;
+}
+
+async function submitGuess() {
+	let guess = { // todo: fill in all of these with real values
+		image_id: 1,
+		building: "HG",
+		floor: 6,
+		x: 200,
+		y: 200,
+		username: localStorage.getItem("username"),
+		time: 60
+	}
+
+	if (!guess.username) {
+		console.log("not logged in")
+		return
+	}
+
+	let res = await fetch(window.location.origin + "/api/submitGuess", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(guess)
+	});
+	console.log(res);
+
+	res = await res.json().catch((e) => console.error(e));
+	console.log(res);
+
+	// todo: display results
+	return res;
 }

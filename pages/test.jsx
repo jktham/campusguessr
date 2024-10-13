@@ -26,6 +26,8 @@ export default function Page() {
 			<button onClick={login}>log in</button>
 			<button onClick={logout}>log out</button>
 			<button onClick={loginOrRegister}>log in or register</button>
+			<button onClick={gambleP}>win premium coin</button>
+			<button onClick={gambleS}>win star coin</button>
 			<div>{loginText}</div>
 		</div>
 	)
@@ -49,7 +51,8 @@ async function submitGuess() {
 		floor: 6,
 		x: 200,
 		y: 200,
-		username: localStorage.getItem("username")
+		username: localStorage.getItem("username"),
+		time: 60
 	}
 
 	if (!guess.username) {
@@ -179,4 +182,40 @@ async function loginOrRegister() {
 		localStorage.setItem("username", user.name);
 		localStorage.setItem("password", user.password);
 	}
+}
+
+async function gambleP() {
+
+	let gambler1 = {
+		username: localStorage.getItem("username"),
+		gambling: "premium",
+		stake: 2
+	}
+
+	let res = await fetch(window.location.origin + "/api/gambling", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(gambler1)
+	});
+	console.log(res);
+	res = await res.json().catch((e) => console.error(e));
+	console.log(res);
+}
+
+async function gambleS() {
+
+	let gambler2 = {
+		username: localStorage.getItem("username"),
+		gambling: "star",
+		stake: 2
+	}
+
+	let res = await fetch(window.location.origin + "/api/gambling", {
+		method: "POST",
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify(gambler2)
+	});
+	console.log(res);
+	res = await res.json().catch((e) => console.error(e));
+	console.log(res);
 }

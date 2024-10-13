@@ -9,10 +9,13 @@ function getDirectories(source) {
 
 export default async function handler(req, res) {
 	let buildings = [];
+	buildings.push({
+		code: "ALL",
+		topscore: 800
+	})
 
 	let subdirs = getDirectories("./public/floorplans")
 	for (let name of subdirs) {
-		console.log(name)
 		buildings.push({
 			code: name,
 			topscore: 800

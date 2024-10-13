@@ -2,7 +2,7 @@ import { pool } from "../../utils/db.js"
 
 let MAX_POINTS = 1000.0;
 let MISS_PENATLY = 100.0;
-let SCALE_FACTOR = 1;
+let SCALE_FACTOR = 0.35;
 let CURRENCY_RATE = 100;
 
 export default async function handler(req, res) {
@@ -14,8 +14,11 @@ export default async function handler(req, res) {
 		floor: req.body.floor || 0,
 		x: req.body.x || 0,
 		y: req.body.y || 0,
-		username: req.body.username
+		username: req.body.username,
+		time: req.body.time || 0
 	}
+
+	// todo: include time in score calculation
 
 	// get true location:
 	let location;
@@ -37,6 +40,7 @@ export default async function handler(req, res) {
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Internal Server Error');
+		return;
 	}
 
 	// Response
@@ -76,6 +80,7 @@ export default async function handler(req, res) {
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Internal Server Error');
+		return;
 	}
 
 	res.status(200).json(answer);
@@ -94,10 +99,10 @@ function calcPoints(guess, actual, answer) {
 		(guess.y - actual.y_coord) * (guess.y - actual.y_coord));
 
 	// store distance
-	answer.distance = deduct;
+	answer.distance = deduct / 17;
 	// store distance
 
-	deduct = Math.log2(deduct) * SCALE_FACTOR;
+	deduct = deduct * SCALE_FACTOR;
 
 	// Floor penalty
 	deduct += Math.abs(guess.floor - actual.value) * MISS_PENATLY;
