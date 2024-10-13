@@ -15,17 +15,17 @@
 }
 .element.primary:hover {
 	background-color: var(--bg2);
-	color: var(--fg3);
+	color: var(--fg1);
 }
 
 .element.secondary {
 	border: 1px solid var(--fg2);
-	color: var(--fg3);
+	color: var(--fg1);
 }
 .element.secondary:hover {
 	background-color: var(--bg2);
 	border-color: var(--bg2);
-	color: var(--bg2);
+	color: var(--fg1);
 }
 
 .element input {

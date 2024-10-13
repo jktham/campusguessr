@@ -1,51 +1,76 @@
+
 import SEO from '../components/SEO'
 import Navigation from '../components/navigation'
-import {Center, ItemContainer} from '../components/container'
+import {Bar, Center, ItemContainer} from '../components/container'
 import {Input, Button} from '../components/control'
-import {useState} from 'react'
-import Card from '../components/card'
-import useSWR from 'swr'
-import {useRouter} from 'next/router'
-
-const fetcher = (...args) => fetch(...args).then(res => res.json())
-
-export default function Home() {
-
-	const router = useRouter()
-
-	const [user, setUser] = useState(undefined)
-	const [building, setBuilding] = useState(undefined)
-	const [floor, setFloor] = useState(undefined)
-	const { data: buildings } = useSWR(user ? '/api/getBuildings' : null, fetcher);
-	const { data: floors } = useSWR(building && building !== "ALL" ? '/api/getFloors?building=' + building : null, fetcher);
+import {useEffect, useState} from 'react'
+import styles from '../styles/game.module.css'
 
 
-	if (!user) return <div className={"wrapper"}>
+export default function Select() {
+
+	const [user, setUser] = useState("serpentine")
+	const [score, setScore] = useState(0)
+
+	useEffect(() => {
+		const l = window.localStorage.getItem("username")
+		if (!user && l) setUser(l)
+	}, []);
+
+	async function onSubmit(e) {
+		e.preventDefault();
+		const formData = new FormData(e.currentTarget)
+
+		let user = {
+			name: formData.get("username") + "",
+			password: formData.get("password") + "",
+		}
+
+		if (!user.name || !user.password || user.password.length < 8) {
+			console.log("empty name or password too short") // TODO: proper feedback
+			return;
+		}
+
+		let res = await fetch(window.location.origin + "/api/loginOrRegister", {
+			method: "POST",
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(user)
+		});
+
+		if (res.status == 200) {
+			localStorage.setItem("username", user.name);
+			localStorage.setItem("password", user.password);
+			setUser(user.name)
+		}
+	}
+
+	return <div className={"wrapper"}>
 		<SEO/>
 		<Navigation/>
 
 		<main>
-			<Center>
-				<form className={"form"} action=""> {/* TODO: jonas do this idk how forms work */}
-					<Input style={"secondary"} placeholder={"> username"}></Input>
-					<Input style={"secondary"} type={"password"} placeholder={"> password"}></Input>
-					<Button style={"primary"} onClick={() => setUser("serpentine")}>&gt; play</Button>
+			{ user ? <Center>
+				<div className={styles.scores}>
+					<header className={styles.header}>{user}</header>
+					<div className={styles.meta}>
+						<p><span>score</span><span>:</span><span>{score ?? "-"}</span></p>
+					</div>
+					<Bar>
+						<Button style={'primary'} href={"/select"}>&gt; play</Button>
+						<Button style={'secondary'} onClick={() => {
+							localStorage.removeItem("username");
+							localStorage.removeItem("password");
+							setUser(undefined)
+						}}>&gt; logout</Button>
+					</Bar>
+				</div>
+			</Center> : <Center>
+				<form className={"form"} onSubmit={onSubmit}>
+					<Input name={"username"} style={"secondary"} placeholder={"> username"}></Input>
+					<Input name={"password"} style={"secondary"} type={"password"} placeholder={"> password"}></Input>
+					<Button style={"primary"}>&gt; play</Button>
 				</form>
-			</Center>
-		</main>
-	</div>
-
-	if (building === "ALL" || building && floor) router.push("/game?building=" + building + "&floor=" + floor);
-
-	return <div className={"wrapper"}>
-		<SEO/>
-		<Navigation header={building ? "Floors" : "Buildings"}/>
-
-		<main>
-			<ItemContainer>
-				{building ? floors?.map(b => <Card onClick={setFloor} data={b}></Card>)
-				: buildings?.map(b => <Card onClick={setBuilding} data={b}></Card>)}
-			</ItemContainer>
+			</Center>}
 		</main>
 	</div>
 }

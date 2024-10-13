@@ -19,7 +19,7 @@ export function Button({ href, target, onClick, children, style }) {
 	)
 }
 
-export function Input({onEnter, style, type, placeholder }) {
+export function Input({name, onEnter, style, type, placeholder }) {
 
 	const onKeyDown = (e) => {
 		if (e.key === "Enter" && onEnter) onEnter(e.target.value);
@@ -28,7 +28,7 @@ export function Input({onEnter, style, type, placeholder }) {
 	return (
 		<>
 			<div className={clsx(styles.element, styles[style], "controls border")}>
-				<input type={type ?? "text"} onKeyDown={onKeyDown} className={"controls"} placeholder={placeholder}/>
+				<input name={name} type={type ?? "text"} onKeyDown={onKeyDown} className={"controls"} placeholder={placeholder}/>
 			</div>
 		</>
 	)
