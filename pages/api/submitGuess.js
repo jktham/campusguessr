@@ -3,6 +3,7 @@ import { pool } from "../../utils/db.js"
 let MAX_POINTS = 1000.0;
 let MISS_PENATLY = 100.0;
 let SCALE_FACTOR = 1;
+let CURRENCY_RATE = 100;
 
 export default async function handler(req, res) {
 
@@ -44,10 +45,12 @@ export default async function handler(req, res) {
 		actual_location: location,
 		distance: 0,
 		new_highscore: false,
-		points: MAX_POINTS
+		points: MAX_POINTS,
+		earned: 0
 	}
 
 	answer.points -= calcPoints(guess, location, answer);
+	answer.earned = answer.points / CURRENCY_RATE;
 
 	// Add to score
 	try {
@@ -56,7 +59,7 @@ export default async function handler(req, res) {
 			`SELECT high_score FROM users WHERE name = '${guess.username}'`);
 
 		// update highscore
-		if (answer.points > highscore.rows[0].high_score) {
+		if (answer.points >= highscore.rows[0].high_score + 0.0001) {
 			answer.new_highscore = true;
 			await pool.query(
 			`UPDATE users SET high_score = ${answer.points} WHERE name = '${guess.username}'`);
@@ -65,6 +68,10 @@ export default async function handler(req, res) {
 		// increment score
 		await pool.query(
 			`UPDATE users SET score = score + ${answer.points} WHERE name = '${guess.username}'`);
+
+		// increment MONEY
+		await pool.query(
+			`UPDATE users SET currency = currency + ${answer.earned} WHERE name = '${guess.username}'`);
 		
 	} catch (err) {
 		console.error(err);
