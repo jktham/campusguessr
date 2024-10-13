@@ -1,0 +1,47 @@
+/* public/styles.css */
+/*
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+*/
+
+.panoramaContainer {
+    width: 100vw;
+    height: 100vh; /* Full viewport height */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    position: relative;
+    white-space: nowrap; /* Prevent line breaks */
+}
+
+.panorama {
+    height: 100vh; /* Match the height of the image to the viewport */
+    width: auto;
+    display: inline-block; /* Prevent image from taking up 100% width */
+}
+
+.scrollArrow {
+    position: fixed; /* Fix the arrows to the left and right of the viewport */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    color: white;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000; /* Make sure the arrows are on top of everything */
+}
+
+.leftArrow {
+    left: 10px; /* Position on the left, stays fixed */
+}
+
+.rightArrow {
+    right: 10px; /* Position on the right, stays fixed */
+}
