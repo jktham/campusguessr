@@ -1,5 +1,15 @@
+.mainlist {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	gap: 20px;
+
+	@media (max-width: 800px) {
+		grid-template-columns: 100%;
+	}
+}
+
 .list {
-	width: 100%;
+	width: 95%;
 	overflow: scroll;
 	background-color: var(--bg3);
 }
