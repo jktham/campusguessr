@@ -1,0 +1,387 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.4 (Ubuntu 16.4-0ubuntu0.24.04.2)
+-- Dumped by pg_dump version 16.4 (Ubuntu 16.4-0ubuntu0.24.04.2)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: floor_index; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.floor_index (
+    building character varying(5) NOT NULL,
+    floor character varying(5) NOT NULL,
+    value integer NOT NULL
+);
+
+
+ALTER TABLE public.floor_index OWNER TO postgres;
+
+--
+-- Name: image; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.image (
+    image_id integer NOT NULL,
+    image_filepath character varying(255) NOT NULL,
+    x_coord real,
+    y_coord real,
+    map_id integer
+);
+
+
+ALTER TABLE public.image OWNER TO postgres;
+
+--
+-- Name: image_image_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.image_image_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.image_image_id_seq OWNER TO postgres;
+
+--
+-- Name: image_image_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.image_image_id_seq OWNED BY public.image.image_id;
+
+
+--
+-- Name: maps; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.maps (
+    map_id integer NOT NULL,
+    map_filepath character varying(255),
+    building character varying(255),
+    floor character varying(255)
+);
+
+
+ALTER TABLE public.maps OWNER TO postgres;
+
+--
+-- Name: image_map; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.image_map AS
+ SELECT i.image_id,
+    i.x_coord,
+    i.y_coord,
+    m.building,
+    m.floor,
+    fi.value
+   FROM ((public.image i
+     JOIN public.maps m ON ((i.map_id = m.map_id)))
+     JOIN public.floor_index fi ON ((((m.building)::text = (fi.building)::text) AND ((m.floor)::text = (fi.floor)::text))));
+
+
+ALTER VIEW public.image_map OWNER TO postgres;
+
+--
+-- Name: maps_map_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.maps_map_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.maps_map_id_seq OWNER TO postgres;
+
+--
+-- Name: maps_map_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.maps_map_id_seq OWNED BY public.maps.map_id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    user_id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    score integer DEFAULT 0,
+    high_score real DEFAULT 0,
+    currency integer DEFAULT 0,
+    premium_currency integer DEFAULT 5,
+    star_currency integer DEFAULT 0,
+    CONSTRAINT users_currency_check CHECK ((currency >= 0)),
+    CONSTRAINT users_high_score_check CHECK ((high_score >= (0)::double precision)),
+    CONSTRAINT users_name_check CHECK ((char_length((name)::text) >= 8)),
+    CONSTRAINT users_premium_currency_check CHECK ((premium_currency >= 0)),
+    CONSTRAINT users_score_check CHECK ((score >= 0)),
+    CONSTRAINT users_star_currency_check CHECK ((star_currency >= 0))
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_user_id_seq OWNER TO postgres;
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
+
+
+--
+-- Name: image image_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.image ALTER COLUMN image_id SET DEFAULT nextval('public.image_image_id_seq'::regclass);
+
+
+--
+-- Name: maps map_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.maps ALTER COLUMN map_id SET DEFAULT nextval('public.maps_map_id_seq'::regclass);
+
+
+--
+-- Name: users user_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.users_user_id_seq'::regclass);
+
+
+--
+-- Data for Name: floor_index; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.floor_index (building, floor, value) FROM stdin;
+HG	B	0
+HG	C	2
+HG	D	4
+HG	DO	5
+HG	E	6
+HG	EO	7
+HG	F	8
+HG	FO	9
+HG	G	10
+HG	GO	11
+HG	H	12
+HG	J	14
+HG	JO	15
+HG	K	16
+HG	KO	17
+\.
+
+
+--
+-- Data for Name: image; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.image (image_id, image_filepath, x_coord, y_coord, map_id) FROM stdin;
+1	./public/imgs/0.jpg	1540	2000	5
+2	./public/imgs/1.jpg	1740	1720	5
+3	./public/imgs/2.jpg	1340	1720	5
+4	./public/imgs/3.jpg	1540	1380	5
+5	./public/imgs/4.jpg	1540	750	5
+6	./public/imgs/5.jpg	1040	1340	3
+7	./public/imgs/6.jpg	2020	1340	3
+8	./public/imgs/7.jpg	1540	1090	7
+9	./public/imgs/8.jpg	1810	875	7
+10	./public/imgs/9.jpg	1680	1360	9
+11	./public/imgs/10.jpg	1540	1780	9
+12	./public/imgs/11.jpg	1460	1750	11
+13	./public/imgs/12.jpg	1340	1340	11
+14	./public/imgs/13.jpg	1315	1320	12
+15	./public/imgs/14.jpg	1315	1320	12
+16	./public/imgs/15.jpg	1295	1360	12
+17	./public/imgs/16.jpg	1350	1180	11
+18	./public/imgs/17.jpg	1350	1260	11
+19	./public/imgs/18.jpg	1340	1495	11
+20	./public/imgs/19.jpg	1440	1170	11
+21	./public/imgs/20.jpg	1500	1040	11
+\.
+
+
+--
+-- Data for Name: maps; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.maps (map_id, map_filepath, building, floor) FROM stdin;
+1	./public/floorplans/HG/HG_B.png	HG	B
+2	./public/floorplans/HG/HG_C.png	HG	C
+3	./public/floorplans/HG/HG_D.png	HG	D
+4	./public/floorplans/HG/HG_DO.png	HG	DO
+5	./public/floorplans/HG/HG_E.png	HG	E
+6	./public/floorplans/HG/HG_EO.png	HG	EO
+7	./public/floorplans/HG/HG_F.png	HG	F
+8	./public/floorplans/HG/HG_FO.png	HG	FO
+9	./public/floorplans/HG/HG_G.png	HG	G
+10	./public/floorplans/HG/HG_GO.png	HG	GO
+11	./public/floorplans/HG/HG_H.png	HG	H
+12	./public/floorplans/HG/HG_J.png	HG	J
+13	./public/floorplans/HG/HG_JO.png	HG	JO
+14	./public/floorplans/HG/HG_K.png	HG	K
+15	./public/floorplans/HG/HG_KO.png	HG	KO
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (user_id, name, password, score, high_score, currency, premium_currency, star_currency) FROM stdin;
+3	testuser2	testpassword2	0	0	0	5	0
+24	12345678	$2b$10$0ehxD0aH2GPYDu3rV0qfkuj2lLr5VASwSjpDYhEFAt/YAriNa5Ysm	0	0	0	3	0
+53	gamer69420	$2b$10$gnukZCuSdU6A39n8U42G..WZl0ItMz44ce24Jld7pjCCCTgIli8xa	637	350.23727	675	1	0
+46	boringabsc	$2b$10$0MHaiqOI6jUOrT1XYrujXeV9lRDZ5VykEfb3jRgn0uyUGHEVN/f5m	803	450.63647	1251	5	0
+50	username	$2b$10$x7SBcmoAkmDG2yZzOKvvY.R47r45JJ1a/8HZVYHRMyoidEQ0WP0da	0	0	0	5	0
+4	annaanna	12345678	215	214.59502	2	5	0
+20	player1234	$2b$10$uYM.eNZlsA9SxOVoLsl2i.sRf98xM/I2oyPoixRx4VWrLH/XLJhbe	1676	718.48206	1810	3	0
+6	fffffffffffff	fffffffffff	430	214.59502	4	5	0
+7	hjgsfdjhg	jshvdjahs	0	0	0	5	0
+8	sophiesss	sophiesss	0	0	0	5	0
+9	sophie12345	sophie12345	0	0	0	5	0
+31	admin@ethz.ch	$2b$10$Z0LCMmSMhqH.37ibY5gpQu1taD3lwpu1SZZn5sjJfOI2kz.a6DIOu	0	0	0	1	0
+55	oefkaposfaf	$2b$10$x0yz5UXFIHp01j0G3P.8yOXxjZNdMLSsAqpFYJAkBg2yzsfHreBwS	806	560.40814	1036	5	0
+2	testuser1	testpassword1	21947	214.59502	11043	3	1
+45	abcdefgh	$2b$10$OGwlkTbOB6UtgNQN5lsuROQI9oLgdkWhMYLcNMVW3eldf8Q9DEbwO	0	0	0	5	0
+5	serpentine	G96BxuE@DMmD$eGs	52	52.09802	67	5	0
+56	gamer694201	$2b$10$Gk7.p6Lxm2Zvm2MOPg5zJOHjPQrTqT7kSIAx98HzicnJRYCvkAHSO	1132	730.7514	1252	5	0
+12	reee1234	$2b$10$pXymTKV4YlNMCpakSPRuFOyWBQC9IbOUCGbP8UkcxTDf7qjPT0nna	0	0	0	5	0
+51	username123	$2b$10$Su.BR2iUW1m/CPc04lfIBO2y6jilcggl2Q/hY8C797/NPze9cJSdO	394	394.24063	4	1	0
+10	placeholders	12345678	1311	493.60092	1557	5	0
+11	sophie123456	$2b$10$b8rJZpfmPnXj8x9z4z4f6.iQQkKlRCCW3tAzCJKucyBvevKmmfHuu	645	214.59502	4	1	0
+13	qwertyuiop	$2b$10$JyxVYdKoy462pVPEo9IKxuaFVB86MybDS0fofJ5vxYQZ5AOaSe6Ry	0	0	0	3	0
+14	Helloworld	$2b$10$s5H2vFvWCujM6qJHCZXFee38T8a/7XtLw7xsjGuy7lay.SXlceY/q	1417	798.4514	1295	5	0
+18	ballsballs	$2b$10$3orAA3Gy5HKL9N.pjYeOe.p2R6U.LuSdtd0LZr/zbeBKrxmdvwNQS	7142	872.7167	6232	3	0
+30	ballsballsballs	$2b$10$446F/NRXoxN/0QXp7IOe4ebZV4gAGUZKHZt97NtkUFKDJwJbtvqL6	3260	984.09106	3382	5	0
+15	testabcd	$2b$10$2objf34ffs2M480iHPdDhOcLHvDhsMZxYk1SYhZ4334bsgkDNaefK	6539	946.14575	4897	3	0
+16	ballsballsuöasdföl-iasfd	$2b$10$VAvO8yn0k.XSJpHPcIc1bO0xdr7lsUNrFq3laFCmakPc6W2CXoS/2	0	0	0	5	0
+17	salkjdfhöoudhfl.kas	$2b$10$qRtlcnfFAaA/UMdSF9cOs.R9UvVHBNB7Nx1aljv9.SLXXPL8sLb4S	0	0	0	5	0
+52	fmantova	$2b$10$1TVMhryp8SZkDH.xLAhQN.D2HG0HNdpJhwLLEYh9mQ8mxn9A8lVC6	78	78.07688	221	3	0
+94	aaaaaaaaaaaaaaaaa	$2b$10$kZagyaqmyB6XK4.nAnkwyOOlLa.tkin.zw/7/s.x76h8PcxJLxXbW	638	637.76776	974	5	0
+\.
+
+
+--
+-- Name: image_image_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.image_image_id_seq', 21, true);
+
+
+--
+-- Name: maps_map_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.maps_map_id_seq', 15, true);
+
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_user_id_seq', 94, true);
+
+
+--
+-- Name: image image_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.image
+    ADD CONSTRAINT image_pkey PRIMARY KEY (image_id);
+
+
+--
+-- Name: maps maps_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_pkey PRIMARY KEY (map_id);
+
+
+--
+-- Name: floor_index pks; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.floor_index
+    ADD CONSTRAINT pks PRIMARY KEY (building, floor);
+
+
+--
+-- Name: users users_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_name_key UNIQUE (name);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: image fk_map; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.image
+    ADD CONSTRAINT fk_map FOREIGN KEY (map_id) REFERENCES public.maps(map_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: maps pks_ref; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT pks_ref FOREIGN KEY (building, floor) REFERENCES public.floor_index(building, floor) ON UPDATE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
